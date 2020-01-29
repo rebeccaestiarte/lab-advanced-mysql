@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>publications</string>
+			<key>host</key>
+			<string>127.0.0.1</string>
+			<key>kcid</key>
+			<string>626341349491669384</string>
+			<key>name</key>
+			<string>127.0.0.1</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPTCPIPConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>root</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>utf8</string>
+			<key>contentFilterV2</key>
+			<dict>
+				<key>children</key>
+				<array/>
+				<key>filterClass</key>
+				<string>groupNode</string>
+				<key>isConjunction</key>
+				<true/>
+			</dict>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSelection</key>
+			<data>
+			YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0
+			b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRk
+			YXRhgAGuCwwZGhscHSEoLTE1ODxVJG51bGzTDQ4PEBQYV05TLmtl
+			eXNaTlMub2JqZWN0c1YkY2xhc3OjERITgAKAA4AEoxUWF4AFgAaA
+			CIANVHR5cGVUcm93c1RrZXlzXxAmU2VsZWN0aW9uRGV0YWlsVHlw
+			ZVByaW1hcnlLZXllZERldGFpbHPTDQ4PHh8goKCAB9IiIyQlWiRj
+			bGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5
+			oyQmJ1xOU0RpY3Rpb25hcnlYTlNPYmplY3TSDg8pLKIqK4AJgAuA
+			DNIPLi8wWU5TLnN0cmluZ4AKVWF1X2lk0iIjMjNfEA9OU011dGFi
+			bGVTdHJpbmejMjQnWE5TU3RyaW5n0g8uLzeAClh0aXRsZV9pZNIi
+			Izk6Xk5TTXV0YWJsZUFycmF5ozk7J1dOU0FycmF50iIjJj2iJicA
+			CAARABoAJAApADIANwBJAEwAUQBTAGIAaABvAHcAggCJAI0AjwCR
+			AJMAlwCZAJsAnQCfAKQAqQCuANcA3gDfAOAA4gDnAPIA+wERARUB
+			IgErATABMwE1ATcBOQE+AUgBSgFQAVUBZwFrAXQBeQF7AYQBiQGY
+			AZwBpAGpAAAAAAAAAgEAAAAAAAAAPgAAAAAAAAAAAAAAAAAAAaw=
+			</data>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {756.5, 850}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>### Step 1: Calculate the royalty of each sale for each author and the advance for each author and publication
+
+
+SELECT au.au_id, ti.title_id, ti.title, ti.advance
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY au.au_id, ti.title_id, ti.title, ti.advance
+ORDER BY au.au_id DESC;
+
+
+SELECT titles.`title_id` , titleauthor.`au_id`,
+
+
+# Challenge 1 - Who Have Published What At Where?
+
+SELECT au.au_id, au.au_fname, au.au_lname, ti.`title`, pu.pub_name 
+FROM authors AS au
+LEFT JOIN `titleauthor` AS ta ON ta.au_id = au.au_id
+LEFT JOIN titles AS ti ON ti.title_id = ta.title_id
+LEFT JOIN publishers as pu ON pu.`pub_id`= ti.`pub_id`;
+
+# Challenge 2 - Who Have Published What At Where?
+
+SELECT au.au_id, au.au_fname, au.au_lname, pu.pub_name, count(ti.title) as title_count
+	FROM authors AS au
+	JOIN titleauthor AS ta ON ta.au_id = au.au_id
+	JOIN titles AS ti ON ti.title_id = ta.title_id
+	JOIN publishers as pu ON pu.`pub_id`= ti.`pub_id`
+group by au.au_id, au.au_fname, au.au_lname, pu.pub_name
+order by au.au_id desc;
+
+
+# Challenge 3 - Best Selling Authors
+
+SELECT au.au_id, au.au_fname, au.au_lname, sum(sl.qty) as tot_sales
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN publishers as pu ON pu.`pub_id`= ti.`pub_id`
+JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY au.au_id
+ORDER BY tot_sales desc
+LIMIT 3;
+
+# Challenge 4 - Best Selling Authors Ranking
+
+SELECT au.au_id, au.au_fname, au.au_lname, sum(COALESCE(qty,0)) as tot_sales
+FROM authors AS au
+left JOIN titleauthor AS ta ON ta.au_id = au.au_id
+left JOIN titles AS ti ON ti.title_id = ta.title_id
+left JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY au.au_id
+ORDER BY tot_sales desc;
+</string>
+			<key>table</key>
+			<string>titleauthor</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>842.5</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>SELECT au.au_id, ti.title_id, ti.title, ti.advance
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY au.au_id, ti.title_id, ti.title, ti.advance
+ORDER BY au.au_id DESC</string>
+		<string>SELECT au.au_id, ti.title_id, ti.title, ti.advance
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY au.au_id, ti.title_id, ti.title, ti.advance</string>
+		<string>### Step 1: Calculate the royalty of each sale for each author and the advance for each author and publication
+
+
+SELECT *
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id</string>
+		<string>SELECT *
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY au.au_id</string>
+		<string>### Step 1: Calculate the royalty of each sale for each author and the advance for each author and publication
+
+
+SELECT *
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY au_id</string>
+		<string>SELECT *
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY au_id</string>
+		<string>SELECT *
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id
+GROUP BY titleauthor.`au_id`</string>
+		<string>SELECT *
+FROM authors AS au
+JOIN titleauthor AS ta ON ta.au_id = au.au_id
+JOIN titles AS ti ON ti.title_id = ta.title_id
+JOIN sales as sl ON sl.title_id = ti.title_id</string>
+		<string>icasso, 636176382, pablopicasso@gmail.com, Paseo de la Chopera 14, Madrid, Spain, 28045)</string>
+		<string>INSERT INTO `Customers` (first_name, last_name, phone, email, address, city, state, country, zip) VALUES (Pablo, Picasso, +34 636 17 63 82, pablopicasso@gmail.com, Paseo de la Chopera 14, Madrid, Spain, 28045)</string>
+		<string>INSERT INTO `Customers` (first_name, last_name, phone, email, address, city, state, country, zip) VALUES (Pablo, Picasso, +34 636 17 63 82, pablopicasso@gmail.com, Paseo de la Chopera, 14, Madrid, Spain, 28045)</string>
+		<string>USE lab_mysql
+
+CREATE TABLE Customers (
+	customers_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (customers_ID),
+	first_name VARCHAR(60),
+	last_name VARCHAR(60),
+	phone VARCHAR(14),
+	email VARCHAR (80),
+	city VARCHAR (30),
+	state VARCHAR(30),
+	country VARCHAR (30),
+	zip VARCHAR(20)            
+	);
+DROP TABLE Customers;
+CREATE TABLE Manufacturers (
+	manufacturer_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (manufacturer_ID),
+	name VARCHAR(40)
+	);
+DROP TABLE Manufacturers;
+CREATE TABLE Cars (
+	VIN INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (VIN),
+	manufacturer_ID INT NOT NULL,
+	model VARCHAR(50),
+	year INT,
+	color VARCHAR,
+	price DECIMAL NOT NULL,
+	FOREIGN KEY (manufacturer_ID) REFERENCES Manufacturers (manufacturer_ID)
+	);
+DROP TABLE Cars;
+CREATE TABLE Stores (
+	store_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (store_ID),
+	name VARCHAR (30),
+	phone VARCHAR(14),
+	city VARCHAR (30),
+	state VARCHAR(30),
+	country VARCHAR (30),
+	zip VARCHAR(20)            
+	);
+DROP TABLE Stores;
+CREATE TABLE Salesperson (
+	staff_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (staff_ID),
+	first_name VARCHAR (30),
+	last_name VARCHAR (30),
+	phone VARCHAR(14),
+	store_ID INT NOT NULL,
+	FOREIGN KEY (store_ID) REFERENCES Stores (store_ID)
+	);
+DROP TABLE Salesperson;
+CREATE TABLE Orders (
+	orders_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (orders_ID),
+	VIN INT NOT NULL, 
+	customers_ID INT NOT NULL,
+	store_ID INT NOT NULL,
+	staff_ID INT NOT NULL,
+	quantities INT,
+	FOREIGN KEY (VIN) REFERENCES Cars (VIN),
+	FOREIGN KEY (customers_ID) REFERENCES Customers (customers_ID),
+	FOREIGN KEY (store_ID) REFERENCES Stores (store_ID),
+	FOREIGN KEY (staff_ID) REFERENCES Salesperson (staff_ID)
+	);
+DROP TABLE Orders;
+CREATE TABLE Invoices (
+	invoice_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (invoice_ID),
+	date DATETIME,
+	VIN INT NOT NULL, 
+	staff_ID INT NOT NULL,
+	FOREIGN KEY (VIN) REFERENCES Cars (VIN),
+	FOREIGN KEY (staff_ID) REFERENCES Salesperson (staff_ID)
+	)</string>
+		<string>CREATE TABLE Invoices (
+	invoice_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (invoice_ID),
+	date DATETIME,
+	VIN INT NOT NULL, 
+	staff_ID INT NOT NULL,
+	FOREIGN KEY (VIN) REFERENCES Cars (VIN),
+	FOREIGN KEY (staff_ID) REFERENCES Salesperson (staff_ID)
+	)</string>
+		<string>CREATE TABLE Orders (
+	orders_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (orders_ID),
+	VIN INT NOT NULL, 
+	customers_ID INT NOT NULL,
+	store_ID INT NOT NULL,
+	staff_ID INT NOT NULL,
+	quantities INT,
+	FOREIGN KEY (VIN) REFERENCES Cars (VIN),
+	FOREIGN KEY (customers_ID) REFERENCES Customers (customers_ID),
+	FOREIGN KEY (store_ID) REFERENCES Stores (store_ID),
+	FOREIGN KEY (staff_ID) REFERENCES Salesperson (staff_ID)
+	)</string>
+		<string>CREATE TABLE Salesperson (
+	staff_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (staff_ID),
+	first_name VARCHAR (30),
+	last_name VARCHAR (30),
+	phone VARCHAR(14),
+	store_ID INT NOT NULL,
+	FOREIGN KEY (store_ID) REFERENCES Stores (store_ID)
+	)</string>
+		<string>CREATE TABLE Stores (
+	store_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (store_ID),
+	name VARCHAR (30),
+	phone VARCHAR(14),
+	city VARCHAR (30),
+	state VARCHAR(30),
+	country VARCHAR (30),
+	zip VARCHAR(20)            
+	)</string>
+		<string>CREATE TABLE Cars (
+	VIN INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (VIN),
+	manufacturer_ID INT NOT NULL,
+	model VARCHAR(50),
+	year INT,
+	color VARCHAR,
+	price DECIMAL NOT NULL,
+	FOREIGN KEY (manufacturer_ID) REFERENCES Manufacturers (manufacturer_ID)
+	)</string>
+		<string>CREATE TABLE Cars (
+	VIN INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (VIN),
+	manufacturer_ID INT NOT NULL,
+	model VARCHAR(50),
+	year INT,
+	color VARCHAR,
+	price DECIMAL(8, 2) NOT NULL,
+	FOREIGN KEY (manufacturer_ID) REFERENCES Manufacturers (manufacturer_ID)
+	)</string>
+		<string>CREATE TABLE Manufacturers (
+	manufacturer_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (manufacturer_ID),
+	name VARCHAR(40)
+	)</string>
+		<string>CREATE TABLE Customers (
+	customers_ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (customers_ID),
+	first_name VARCHAR(60),
+	last_name VARCHAR(60),
+	phone VARCHAR(14),
+	email VARCHAR (80),
+	city VARCHAR (30),
+	state VARCHAR(30),
+	country VARCHAR (30),
+	zip VARCHAR(20)            
+	)</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>8.0.18</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>
